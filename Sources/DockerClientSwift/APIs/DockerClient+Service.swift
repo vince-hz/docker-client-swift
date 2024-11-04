@@ -31,7 +31,7 @@ extension DockerClient {
         /// - Returns: Returns an `EventLoopFuture` with the updated `Service`.
         public func update(service: Service, newImage: Image) throws -> EventLoopFuture<Service> {
             try client.run(UpdateServiceEndpoint(nameOrId: service.id.value, name: service.name, version: service.version, image: newImage.id.value))
-                .flatMap({ _ in
+                ._flatMap({ _ in
                     try self.get(serviceByNameOrId: service.id.value)
                 })
         }
@@ -56,7 +56,7 @@ extension DockerClient {
         /// - Returns: Returns an `EventLoopFuture` with the newly created `Service`.
         public func create(serviceName name: String, image: Image) throws -> EventLoopFuture<Service> {
             try client.run(CreateServiceEndpoint(name: name, image: image.id.value))
-                .flatMap({ serviceId in
+                ._flatMap({ serviceId in
                     try client.run(InspectServiceEndpoint(nameOrId: serviceId.ID))
                 })
                 .map({ service in

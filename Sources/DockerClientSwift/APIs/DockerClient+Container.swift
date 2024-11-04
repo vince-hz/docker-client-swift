@@ -61,7 +61,7 @@ extension DockerClient {
                 hostConfig = CreateContainerEndpoint.CreateContainerBody.HostConfig(PortBindings: portBindingsByContainerPort)
             }
             return try client.run(CreateContainerEndpoint(imageName: image.id.value, commands: commands, exposedPorts: exposedPorts, hostConfig: hostConfig))
-                .flatMap({ response in
+                ._flatMap({ response in
                     try self.get(containerByNameOrId: response.Id)
                 })
         }
@@ -72,7 +72,7 @@ extension DockerClient {
         /// - Returns: Returns an `EventLoopFuture` of active actual `PortBinding`s when the container is started.
         public func start(container: Container) throws -> EventLoopFuture<[PortBinding]> {
             return try client.run(StartContainerEndpoint(containerId: container.id.value))
-                .flatMap { _ in
+                ._flatMap { _ in
                     try client.run(InspectContainerEndpoint(nameOrId: container.id.value))
                         .flatMapThrowing { response in
                             try response.NetworkSettings.Ports.flatMap { (containerPortSpec, bindings) in

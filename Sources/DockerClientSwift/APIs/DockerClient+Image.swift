@@ -36,7 +36,7 @@ extension DockerClient {
         /// - Returns: Fetches the latest image information and returns an `EventLoopFuture` with the `Image` that has been fetched.
         public func pullImage(byIdentifier identifier: String) throws -> EventLoopFuture<Image> {
             return try client.run(PullImageEndpoint(imageName: identifier))
-                .flatMap({ _ in
+                ._flatMap({ _ in
                     try self.get(imageByNameOrId: identifier)
                 })
         }
