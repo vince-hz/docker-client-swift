@@ -37,6 +37,17 @@ public class DockerClient {
             .logResponseBody(logger)
             .decode(as: T.Response.self)
     }
+  
+    /// Executes a request to a specific endpoint. The `Endpoint` struct provides all necessary data and parameters for the request.
+    /// - Parameter endpoint: `StreamingTarEndpoint` instance with all necessary data and parameters.
+    /// - Throws: It can throw an error when encoding the body of the `StreamingTarEndpoint` request to JSON.
+    /// - Returns: Returns an `EventLoopFuture` of the expected result definied by the `StreamingTarEndpoint`.
+    internal func run<T: StreamingTarEndpoint>(_ endpoint: T) throws -> EventLoopFuture<T.Response> {
+        logger.info("Execute StreamingEndpoint: \(endpoint.path)")
+        return client.execute(endpoint.method, socketPath: daemonSocket, urlPath: "/v1.40/\(endpoint.path)", body: HTTPClient.Body.data(endpoint.body!), logger: logger, headers: HTTPHeaders([("Content-Type", "application/x-tar"), ("Host", "localhost")]))
+            .logResponseBody(logger)
+            .decode(as: T.Response.self)
+    }
     
     /// Executes a request to a specific endpoint. The `PipelineEndpoint` struct provides all necessary data and parameters for the request. The difference for between `Endpoint` and `EndpointPipeline` is that the second one needs to provide a function that transforms the response as a `String` to the expected result.
     /// - Parameter endpoint: `PipelineEndpoint` instance with all necessary data and parameters.

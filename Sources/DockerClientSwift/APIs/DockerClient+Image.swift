@@ -29,6 +29,11 @@ extension DockerClient {
             }
             return try pullImage(byIdentifier: identifier)
         }
+      
+      public func loadIMage(src: String) throws -> EventLoopFuture<Void> {
+        return try client.run(LoadImageEndpoint(src: src))
+              .map { _ in () }
+      }
         
         /// Pulls an image by a given identifier. The identifier can be build manually.
         /// - Parameter identifier: Identifier of an image that is pulled.

@@ -18,3 +18,7 @@ extension Endpoint {
 protocol PipelineEndpoint: Endpoint {
     func map(data: String) throws -> Self.Response
 }
+
+protocol StreamingTarEndpoint: Endpoint {
+    typealias Body = Data
+}
